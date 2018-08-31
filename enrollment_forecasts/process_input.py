@@ -78,12 +78,13 @@ class ProcessInputCSV:
 
     # FIRST GRADE
     loopDiffs = []
+
     for i in range(values_len-1):
       if i == 0:
         diff = np.diff(np.diagonal(npvalues, i, 1, 0)[0:2])[0]
         loopDiffs.append(diff)
       elif i == values_len-2:
-        diff = np.diff(np.diagonal(npvalues, -i, 1, 0)[-i+1:])[0]
+        diff = np.diff(np.diagonal(npvalues, -i, 1, 0)[-i:])[0]
         loopDiffs.append(diff)
       else:
         diff = np.diff(np.diagonal(npvalues, -i, 1, 0)[0:2])[0]
