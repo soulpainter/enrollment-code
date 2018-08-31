@@ -74,41 +74,61 @@ class ProcessInputCSV:
 
     # DO ALL OTHER GRADES
     npvalues = np.asarray(self.gradeValues)
+    values_len = len(npvalues[0])
 
     # FIRST GRADE
-    fourthDiff = np.diff(np.diagonal(npvalues, -3, 1, 0)[-2:])[0]
-    thirdDiff = np.diff(np.diagonal(npvalues, -2, 1, 0)[0:2])[0]
-    secondDiff = np.diff(np.diagonal(npvalues, -1, 1, 0)[0:2])[0]
-    firstDiff = np.diff(np.diagonal(npvalues, 0, 1, 0)[0:2])[0]
-    tempDiffs.append([firstDiff, secondDiff, thirdDiff, fourthDiff])
+    loopDiffs = []
+    for i in range(values_len-1):
+      if i == 0:
+        diff = np.diff(np.diagonal(npvalues, i, 1, 0)[0:2])[0]
+        loopDiffs.append(diff)
+      elif i == values_len-2:
+        diff = np.diff(np.diagonal(npvalues, -i, 1, 0)[-i+1:])[0]
+        loopDiffs.append(diff)
+      else:
+        diff = np.diff(np.diagonal(npvalues, -i, 1, 0)[0:2])[0]
+        loopDiffs.append(diff)
+
+    tempDiffs.append(loopDiffs)
 
     # SECOND GRADE
-    fourthDiff = np.diff(np.diagonal(npvalues, -2, 1, 0)[-2:])[0]
-    thirdDiff = np.diff(np.diagonal(npvalues, -1, 1, 0)[1:3])[0]
-    secondDiff = np.diff(np.diagonal(npvalues, 0, 1, 0)[1:3])[0]
-    firstDiff = np.diff(np.diagonal(npvalues, 1, 1, 0)[0:2])[0]
-    tempDiffs.append([firstDiff, secondDiff, thirdDiff, fourthDiff])
+    loopDiffs = []
+    startNum = 1
+    for i in range(values_len-1):
+      if i == 0:
+        diff = np.diff(np.diagonal(npvalues, startNum, 1, 0)[0:2])[0]
+        loopDiffs.append(diff)
+      elif i == values_len-2:
+        diff = np.diff(np.diagonal(npvalues, startNum, 1, 0)[-2:])[0]
+        loopDiffs.append(diff)
+      else:
+        diff = np.diff(np.diagonal(npvalues, startNum, 1, 0)[1:3])[0]
+        loopDiffs.append(diff)
 
-    # THIRD THROUGH THE LAST GRADE CAN BE DONE IN A LOOP
-    start = 3
-    loops = len(npvalues) - start
+      startNum -= 1
 
-    fourthIndex = -1
-    thirdIndex = 0
-    secondIndex = 1
-    firstIndex = 2
+    tempDiffs.append(loopDiffs)
 
-    for i in range(loops):
-      fourthDiff = np.diff(np.diagonal(npvalues, fourthIndex, 1, 0)[-2:])[0]
-      thirdDiff = np.diff(np.diagonal(npvalues, thirdIndex, 1, 0)[2:4])[0]
-      secondDiff = np.diff(np.diagonal(npvalues, secondIndex, 1, 0)[1:3])[0]
-      firstDiff = np.diff(np.diagonal(npvalues, firstIndex, 1, 0)[0:2])[0]
-      tempDiffs.append([firstDiff, secondDiff, thirdDiff, fourthDiff])
+    # THIRD THROUGH THE LAST GRADE CAN BE DONE IN A LOOP; START WITH THE THIRD GRADE; SKIP K, 1 & 2
+    startGrade = 3
+    gradeLoops = len(npvalues) - startGrade
+    cellCount = len(npvalues[0])
+    cellCalcNum = cellCount - 1
 
-      fourthIndex += 1
-      thirdIndex += 1
-      secondIndex += 1
-      firstIndex += 1
+    for loopNum in range(gradeLoops):
+
+      grade = loopNum + startGrade
+
+      cellDiffs = []
+      for cell in range(cellCalcNum):
+        if cell == cellCalcNum -1:
+          diff = np.diff(np.diagonal(npvalues, grade - cellCalcNum, 1, 0)[-2:])[0]
+        else:
+          diff = np.diff(np.diagonal(npvalues, grade - cell - 1, 1, 0)[cell:cell+2])[0]
+
+        cellDiffs.append(diff)
+      
+      tempDiffs.append(cellDiffs)
 
     self.diffs = np.asarray(tempDiffs)
 
