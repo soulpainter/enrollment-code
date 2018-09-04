@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from process_input import ProcessInputCSV
+from lib.process_input import ProcessInputCSV
 
 class ProcessInputCSVTestCase(unittest.TestCase):
     """Tests for `process_input.py`."""

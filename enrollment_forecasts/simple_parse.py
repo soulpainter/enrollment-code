@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-from process_input import ProcessInputCSV
+from lib.process_input import ProcessInputCSV
 
 weights = [1,1,1]
 parser = ProcessInputCSV('data/rose_valley.csv', weights)

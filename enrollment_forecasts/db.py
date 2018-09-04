@@ -1,21 +1,24 @@
+from lib.ca_db import CaDb
+
 # Import create_engine function
-from sqlalchemy import create_engine, text
-from process_input import ProcessInputCSV
+#from sqlalchemy import create_engine, text
+from lib.process_input import ProcessInputCSV
 import numpy as np
 
 # Create an engine to the census database
-db = create_engine('mysql+pymysql://root:&$#$JFl23asfjA)8wfLFr29&^@localhost/CaliforniaEnrollment')
+#db = create_engine('mysql+pymysql://root:&$#$JFl23asfjA)8wfLFr29&^@localhost/CaliforniaEnrollment')
 
 # Print the table names
 #print(db.table_names())
 
-districtSql = "SELECT * FROM Districts d WHERE d.id = 290"
+#districtSql = "SELECT * FROM Districts d WHERE d.id = 290"
 #districtSql = "SELECT d.id as districtId, d.name as districtName, s.id as schoolId, s.name as schoolName, s.cds_code as schoolCdsCode FROM Districts d JOIN Schools s ON s.district_id = d.id"
-districtSql = "SELECT d.id as districtId, d.name as districtName FROM Districts d"
+#districtSql = "SELECT d.id as districtId, d.name as districtName FROM Districts d"
 #districtSql = "SELECT * FROM Districts d WHERE d.id = 35"
 
-sql = text(districtSql)
-result = db.engine.execute(sql)
+caDb = CaDb()
+result = caDb.getDistricts()
+
 names = []
 
 print "=========================="
@@ -25,9 +28,7 @@ for row in result:
 
   print "Running forecast on ", row[1], " ( ", row[0], " )"
 
-
-  countSql = text("SELECT year, sum(kdgn) as 'K', sum(gr_1) as '1', sum(gr_2) as '2', sum(gr_3) as '3', sum(gr_4) as '4', sum(gr_5) as '5', sum(gr_6) as '6', sum(gr_7) as '7', sum(gr_8) as '8', sum(gr_9) as '9', sum(gr_10) as '10', sum(gr_11) as '11', sum(gr_12) as '12' FROM Districts d JOIN Schools s ON s.district_id = d.id JOIN SchoolGradeCounts c ON c.school_id = s.id WHERE d.id =" + str(row[0]) + " GROUP BY d.id, year LIMIT 6")
-  countResults = db.engine.execute(countSql)
+  countResults = caDb.getSchoolGradeCounts(row[0])
 
   for count in countResults:
     headers = (count.keys())

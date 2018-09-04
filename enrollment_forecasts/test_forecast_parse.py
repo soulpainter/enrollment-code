@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-from process_input import ProcessInputCSV
+from lib.process_input import ProcessInputCSV
 import time
 import sys
 
