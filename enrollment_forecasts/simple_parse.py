@@ -2,7 +2,7 @@
 
 from process_input import ProcessInputCSV
 
-weights = [3,2,1]
+weights = [1,1,1]
 parser = ProcessInputCSV('data/rose_valley.csv', weights)
 parser.createForecast()
 

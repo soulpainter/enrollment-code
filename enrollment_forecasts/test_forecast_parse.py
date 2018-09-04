@@ -18,7 +18,7 @@ parser = ProcessInputCSV('data/small_rose_valley.csv', weights)
 parser.createForecast()
 
 use = 3
-maxnum = 101
+maxnum = 21
 
 closestSum = 0
 closestWeights = []
@@ -59,6 +59,7 @@ for x in range(1, maxnum):
 
       counter += 1
 
+print ""
 print "LAST YEAR REAL: ", lastYearRealSum
 print "# OF WEIGHTS RUN: ", counter
 print "NUMBERS RUN THROUGH: 1 -" , maxnum - 1

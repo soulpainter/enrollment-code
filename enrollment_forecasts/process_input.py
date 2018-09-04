@@ -20,16 +20,34 @@ class ProcessInputCSV:
 
   forecastYears = 10
 
+  canDoCalculations = 0
+
   def __init__ (self, inputFile, weights):
     self.inputFile = inputFile
-    self.matrix = np.genfromtxt(self.inputFile ,delimiter=',', skip_header=0, names=True, dtype=None)
+    self.setMatrix(np.genfromtxt(self.inputFile ,delimiter=',', skip_header=0, names=True, dtype=None), weights)
+
+  def didForecase(self):
+    return self.canDoCalculations
+
+  def setMatrix(self, matrix, weights):
+    self.matrix = matrix
 
     self.setWeights(weights)
     self.setGrades()
     self.setGradeValues()
-    self.setDiffs()
-    self.setDiffAvgs()
-    self.setSums()
+
+    columnSize = len(self.gradeValues[0])
+
+    if(columnSize <= 3):
+      self.canDoCalculations = 0
+      return 0
+    else:
+      self.canDoCalculations = 1
+
+    if self.canDoCalculations == 1:
+      self.setDiffs()
+      self.setDiffAvgs()
+      self.setSums()
 
   def getMatrix(self):
     return self.matrix
@@ -46,9 +64,18 @@ class ProcessInputCSV:
     self.forecastSums = []
     self.diffAvgs = []
 
-    self.setDiffAvgs()
-    self.setForecast()
-    self.setForecastSums()
+    columnSize = len(self.gradeValues[0])
+
+    if(columnSize <= 3):
+      self.canDoCalculations = 0
+      return 0
+    else:
+      self.canDoCalculations = 1
+
+    if self.canDoCalculations == 1:
+      self.setDiffAvgs()
+      self.setForecast()
+      self.setForecastSums()
 
   def setGrades(self):
       self.grades = [i[0] for i in self.getMatrix()]
@@ -64,6 +91,13 @@ class ProcessInputCSV:
 
   def setDiffs(self):
     tempDiffs = []
+    columnSize = len(self.gradeValues[0])
+
+    if(columnSize <= 3):
+      self.canDoCalculations = 0
+      return 0
+    else:
+      self.canDoCalculations = 1
 
     # DO KINDERGARDEN
     tempDiffs.append(np.diff(self.gradeValues[0]))
@@ -83,7 +117,7 @@ class ProcessInputCSV:
       if i == 0:
         diff = np.diff(np.diagonal(npvalues, i, 1, 0)[0:2])[0]
         loopDiffs.append(diff)
-      elif i == values_len-2:
+      elif i == values_len-2 and values_len > 3:
         diff = np.diff(np.diagonal(npvalues, -i, 1, 0)[-i:])[0]
         loopDiffs.append(diff)
       else:
@@ -139,13 +173,13 @@ class ProcessInputCSV:
   def setDiffAvgs(self):
     # THIS WAY ONLY WORKS FOR KINDERGARDEN
     weightsValues = np.array(self.weights) * np.array(np.flipud(self.diffs[0])[0:3])
-    self.diffAvgs.append(sum(weightsValues) / float(self.weightSum))
+    self.diffAvgs.append(sum(weightsValues) / self.weightSum)
 
     # NEED TO FIGURE OUT SOMETHING FOR ALL OTHER GRADES - THIS DOESNT WORK
     for row in self.diffs[1:]:
       firstThreeValues = (np.flipud(row)[0:3])
       weightsValues = np.array(self.weights) * np.array(firstThreeValues)
-      self.diffAvgs.append(sum(weightsValues) / float(self.weightSum))
+      self.diffAvgs.append(sum(weightsValues) / self.weightSum)
   
   def getDiffAvgs(self):
     return self.diffAvgs
