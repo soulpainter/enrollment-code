@@ -26,7 +26,7 @@ class ProcessInputCSV:
     self.inputFile = inputFile
     self.setMatrix(np.genfromtxt(self.inputFile ,delimiter=',', skip_header=0, names=True, dtype=None), weights)
 
-  def didForecase(self):
+  def didForecast(self):
     return self.canDoCalculations
 
   def setMatrix(self, matrix, weights):
