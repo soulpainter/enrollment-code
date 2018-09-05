@@ -1,9 +1,9 @@
 #!/usr/local/bin/python
 
-from process_input import ProcessInputCSV
+from lib.process_input import ProcessInputCSV
 
-weights = [3,2,1]
-parser = ProcessInputCSV('data/small_rose_valley.csv', weights)
+weights = [1,1,1]
+parser = ProcessInputCSV('data/rose_valley.csv', weights)
 parser.createForecast()
 
 # LOOP THROUGH THE GRADES, THE VALUES OF THE GRADES, THE DIFFS BETWEEN GRADE VALUES
