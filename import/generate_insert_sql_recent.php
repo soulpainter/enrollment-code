@@ -29,13 +29,9 @@ function generateCountyDistrictSchoolList($year,$filename) {
 #      {
 
       $data = array_slice($bits,6);
-      #print_r($data);
       
       if(isset($data_results[$cds_code][$year]))
       {
-        #print "SEEN BEFORE\n";
-        #print_r(array_values($data_results[$cds_code][$year]));
-        #print_r($data);
         $sum_data = array_map(function (...$arrays) 
         {
           return array_sum($arrays);
@@ -47,7 +43,6 @@ function generateCountyDistrictSchoolList($year,$filename) {
       }
       else
       {
-        #print "FIRST TIME\n";
         $combined_data = array_combine($data_headers, $data);
         $data_results[$cds_code][$year] = $combined_data;
       }
@@ -57,8 +52,7 @@ function generateCountyDistrictSchoolList($year,$filename) {
 #      }
     }
   }
-  #print_r($data_results); exit;
-  return array('lookup'=>$lookup, 'data_results'=>$data_results);;
+  return array('lookup'=>$lookup, 'data_results'=>$data_results);
 }
 
 $all_data = array();
