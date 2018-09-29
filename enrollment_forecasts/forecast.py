@@ -5,13 +5,15 @@ import numpy as np
 caDb = CaDb()
 allDistricts = caDb.getDistricts()
 
-print "=========================="
+maxWeightNum = 21
 
 for row in allDistricts:
   district = []
   years = []
 
-  print "Running forecast on ", row[1], " ( ", row[0], " )"
+  #print "Running forecast on ", row[1], " ( ", row[0], " )"
+
+  districtId = row[0]
 
   gradeCountResults = caDb.getSchoolGradeCounts(row[0])
 
@@ -45,13 +47,8 @@ for row in allDistricts:
   for data in inputData:
     newInputData.append(tuple(data))
 
-  #print newInputData
   weights = [3,2,1]
   parser = ProcessInputCSV('data/rose_valley.csv', weights)
-  #parser.setMatrix(newInputData, weights)
-  #parser.createForecast()
-  #print parser.getSums()
-  #exit()
 
   numberOfColumns = len(newInputData[0])
   numberOfListItems = len(newInputData)
@@ -82,39 +79,16 @@ for row in allDistricts:
       sectionInfo = {'years':sliceYears,'inputData':districtInputData}
       sectionInputData.append(sectionInfo)
 
-  #weights = [3,2,1]
-  #parser = ProcessInputCSV('data/rose_valley.csv', weights)
-
   for sectionData in sectionInputData:
-    parser.setMatrix(sectionData['inputData'], weights)
-    parser.createForecast()
+    for i in range(1,maxWeightNum):
+      for j in range(1, maxWeightNum):
+        for k in range(1, maxWeightNum):
+          weight = [float(i), float(j), float(k)]
 
-    if parser.didForecast() == 1:
-      # LOOP THROUGH THE GRADES, THE VALUES OF THE GRADES, THE DIFFS BETWEEN GRADE VALUES
-      #for g, v, d, a in zip(parser.getGrades(), parser.getGradeValues(), parser.getDiffs(), parser.getDiffAvgs()):
-      #  print g, v, d, a
+          parser.setMatrix(sectionData['inputData'], weight)
+          parser.createForecast()
 
-      # THIS PRINTS OUT THE COLUMNS SUMS
-      #print parser.getSums()
-
-      # THIS PRINTS OUT THE FORECAST
-      #print parser.getForecast()
-      #print parser.getForecastSums() 
-      #print years[-1]
-      #print sectionData['years'][-1]
-      #exit()
-
-      for y, f in zip(parser.getSums(), range(sectionData['years'][0]-1, sectionData['years'][0]-1+len(parser.getSums()))):
-        print "Real Year & Sum: ", y, f
-
-      for y, f in zip(parser.getForecastSums(), range(sectionData['years'][-1], sectionData['years'][-1]+len(parser.getForecastSums()))):
-        print "Forecast Year & Sum: ", y, f
-    else:
-      print "Not enough information to do forecast"
-
-    print "+++++++++++"
-
-  print "==================================="
-
-
+          if parser.didForecast() == 1:
+            for sum_value, year in zip(parser.getForecastSums(), range(sectionData['years'][-1], sectionData['years'][-1]+len(parser.getForecastSums()))):
+              print "INSERT INTO HistoricalForecasts (districtId, year, sum, weights,startYear, endYear) VALUES ({},{},{},'{}',{},{});".format(districtId, year, sum_value, weight, sectionData['years'][0], sectionData['years'][-1])
 

@@ -13,7 +13,8 @@ class CaDb:
     sql = "SELECT * FROM Districts d WHERE d.id = 290"
 
     # THIS IS ALL OF THE DISTRICTS
-    sql = "SELECT d.id as districtId, d.name as districtName FROM Districts d LIMIT 3"
+    #sql = "SELECT d.id as districtId, d.name as districtName FROM Districts d"
+    sql = "SELECT d.id as districtId, d.name as districtName FROM Districts d LIMIT 1"
 
     # NOT ENOUGH DATA TO CALCULATE THIS
     #sql = "SELECT * FROM Districts d WHERE d.id = 35"
